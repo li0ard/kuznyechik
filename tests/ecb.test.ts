@@ -7,12 +7,10 @@ const encrypted = Buffer.from("7f679d90bebc24305a468d42b9d4edcd", "hex")
 
 describe("ECB", () => {
     test("Encryption", () => {
-        let result = encryptECB(key, plaintext)
-        expect(result).toStrictEqual(encrypted)
+        expect(encryptECB(key, plaintext)).toStrictEqual(encrypted)
     })
 
     test("Decryption", () => {
-        let result = decryptECB(key, encrypted)
-        expect(result).toStrictEqual(plaintext)
+        expect(decryptECB(key, encrypted)).toStrictEqual(plaintext)
     })
 })

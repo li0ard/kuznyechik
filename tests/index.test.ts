@@ -25,16 +25,14 @@ describe("Transformation S", () => {
     test("Normal", () => {
         for(let i of test_cases) {
             let input = i[0].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformS(input)).toStrictEqual(i[1])
+            expect(new Kuznyechik(key).transformS(input)).toStrictEqual(i[1])
         }
     })
     
     test("Reverse", () => {
         for(let i of test_cases) {
             let input = i[1].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformS_rev(input)).toStrictEqual(i[0])
+            expect(new Kuznyechik(key).transformS_rev(input)).toStrictEqual(i[0])
         }
     })
 })
@@ -53,8 +51,7 @@ test("GF multiply", () => {
         [90, 12, 62],
     ]
     for(let [a, b, expected] of test_cases) {
-        const cipher = new Kuznyechik(key)
-        expect(cipher.gfMultiply(a, b)).toBe(expected)
+        expect(new Kuznyechik(key).gfMultiply(a, b)).toBe(expected)
     }
 })
 
@@ -81,16 +78,14 @@ describe("Transformation R", () => {
     test("Normal", () => {
         for(let i of test_cases) {
             let input = i[0].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformR(input)).toStrictEqual(i[1])
+            expect(new Kuznyechik(key).transformR(input)).toStrictEqual(i[1])
         }
     })
 
     test("Reverse", () => {
         for(let i of test_cases) {
             let input = i[1].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformR_rev(input)).toStrictEqual(i[0])
+            expect(new Kuznyechik(key).transformR_rev(input)).toStrictEqual(i[0])
         }
     })
 })
@@ -117,16 +112,14 @@ describe("Transformation L", () => {
     test("Normal", () => {
         for(let i of test_cases) {
             let input = i[0].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformL(input)).toStrictEqual(i[1])
+            expect(new Kuznyechik(key).transformL(input)).toStrictEqual(i[1])
         }
     })
 
     test("Reverse", () => {
         for(let i of test_cases) {
             let input = i[1].slice()
-            const cipher = new Kuznyechik(key)
-            expect(cipher.transformL_rev(input)).toStrictEqual(i[0])
+            expect(new Kuznyechik(key).transformL_rev(input)).toStrictEqual(i[0])
         }
     })
 })
@@ -144,8 +137,7 @@ test("Round keys", () => {
         new Uint8Array([0xbb, 0x44, 0xe2, 0x53, 0x78, 0xc7, 0x31, 0x23, 0xa5, 0xf3, 0x2f, 0x73, 0xcd, 0xb6, 0xe5, 0x17]),
         new Uint8Array([0x72, 0xe9, 0xdd, 0x74, 0x16, 0xbc, 0xf4, 0x5b, 0x75, 0x5d, 0xba, 0xa8, 0x8e, 0x4a, 0x40, 0x43]),
     ]
-    let cipher = new Kuznyechik(key)
-    let result = cipher.getRoundKeys()
+    let result = new Kuznyechik(key).getRoundKeys()
     for(let i = 0; i < 10; i++) {
         expect(result[i]).toStrictEqual(expected[i])
     }

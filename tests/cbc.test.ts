@@ -8,12 +8,10 @@ const encrypted = Buffer.from("689972d4a085fa4d90e52e3d6d7dcc272826e661b478eca6a
 
 describe("CBC", () => {
     test("Encryption", () => {
-        let result = encryptCBC(key, plaintext, iv)
-        expect(result).toStrictEqual(encrypted)
+        expect(encryptCBC(key, plaintext, iv)).toStrictEqual(encrypted)
     })
 
     test("Decryption", () => {
-        let result = decryptCBC(key, encrypted, iv)
-        expect(result).toStrictEqual(plaintext)
+        expect(decryptCBC(key, encrypted, iv)).toStrictEqual(plaintext)
     })
 })

@@ -10,11 +10,9 @@ import { ctr } from "@li0ard/gost3413"
  * @returns {Uint8Array}
  */
 export const encryptCTR = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
-    const cipher = new Kuznyechik(key)
-    const encrypter = (buf: Uint8Array) => {
-        return cipher.encryptBlock(buf)
-    }
-    return ctr(encrypter, BLOCK_SIZE, data, iv)
+    const cipher = new Kuznyechik(key);
+    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
+    return ctr(encrypter, BLOCK_SIZE, data, iv);
 }
 
 /**
@@ -25,4 +23,4 @@ export const encryptCTR = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): U
  * @param iv Initialization vector
  * @returns {Uint8Array}
  */
-export const decryptCTR = encryptCTR
+export const decryptCTR = encryptCTR;

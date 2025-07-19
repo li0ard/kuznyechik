@@ -21,39 +21,33 @@ describe("CTR-ACPKM", () => {
         expect(result3).toStrictEqual(expected3)
     })
     test("Encryption", () => {
-        let result = encryptCTR_ACPKM(key, plaintext, iv)
-        expect(result).toStrictEqual(encrypted)
+        expect(encryptCTR_ACPKM(key, plaintext, iv)).toStrictEqual(encrypted)
     })
 
     test("Decryption", () => {
-        let result = decryptCTR_ACPKM(key, encrypted, iv)
-        expect(result).toStrictEqual(plaintext)
+        expect(decryptCTR_ACPKM(key, encrypted, iv)).toStrictEqual(plaintext)
     })
 })
 
 describe("OMAC-ACPKM", () => {
     let expected = Buffer.from("0CABF1F2EFBC4AC16048DF1A24C605B2C0D1673D7586A8EC0DD42C45A4F95BAE0F2E2617E47148680FC3E6178DF2C137C9DDA89CFFA491FEADD9B3EAB703BB31BC7E927F0494729F51B49D3DF9C9460800FBBCF5EDEE610EA02F01093C7BC742D7D6271501B177775263C2A3495A8318A81C79A04F29660EA3FDA874C630799E142C577914FEA90D3BC2502E833685D9", "hex")
     test("Derivation", () => {
-        let result = acpkmDerivationMaster(key, 1)
-        expect(result).toStrictEqual(expected.subarray(0, 48))
+        expect(acpkmDerivationMaster(key, 1)).toStrictEqual(expected.subarray(0, 48))
     })
 
     test("Derivation #2", () => {
-        let result = acpkmDerivationMaster(key, 3)
-        expect(result).toStrictEqual(expected)
+        expect(acpkmDerivationMaster(key, 3)).toStrictEqual(expected)
     })
 
     test("Compute", () => {
         let data = Buffer.from("1122334455667700FFEEDDCCBBAA99880011223344556677", "hex")
         let expected = Buffer.from("B5367F47B62B995EEB2A648C5843145E", "hex")
-        let result = omac_ACPKM(key, data)
-        expect(result).toStrictEqual(expected)
+        expect(omac_ACPKM(key, data)).toStrictEqual(expected)
     })
 
     test("Compute #2", () => {
         let data = Buffer.from("1122334455667700FFEEDDCCBBAA998800112233445566778899AABBCCEEFF0A112233445566778899AABBCCEEFF0A002233445566778899AABBCCEEFF0A001133445566778899AABBCCEEFF0A001122", "hex")
         let expected = Buffer.from("FBB8DCEE45BEA67C35F58C5700898E5D", "hex")
-        let result = omac_ACPKM(key, data)
-        expect(result).toStrictEqual(expected)
+        expect(omac_ACPKM(key, data)).toStrictEqual(expected)
     })
 })

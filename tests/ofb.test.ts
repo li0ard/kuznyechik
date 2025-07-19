@@ -8,12 +8,10 @@ const encrypted = Buffer.from("81800a59b1842b24ff1f795e897abd95ed5b47a7048cfab48
 
 describe("OFB", () => {
     test("Encryption", () => {
-        let result = encryptOFB(key, plaintext, iv)
-        expect(result).toStrictEqual(encrypted)
+        expect(encryptOFB(key, plaintext, iv)).toStrictEqual(encrypted)
     })
 
     test("Decryption", () => {
-        let result = decryptOFB(key, encrypted, iv)
-        expect(result).toStrictEqual(plaintext)
+        expect(decryptOFB(key, encrypted, iv)).toStrictEqual(plaintext)
     })
 })

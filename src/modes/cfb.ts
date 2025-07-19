@@ -10,11 +10,9 @@ import { cfb_encrypt, cfb_decrypt } from "@li0ard/gost3413"
  * @returns {Uint8Array}
  */
 export const encryptCFB = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
-    const cipher = new Kuznyechik(key)
-    const encrypter = (buf: Uint8Array) => {
-        return cipher.encryptBlock(buf)
-    }
-    return cfb_encrypt(encrypter, BLOCK_SIZE, data, iv)
+    const cipher = new Kuznyechik(key);
+    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
+    return cfb_encrypt(encrypter, BLOCK_SIZE, data, iv);
 }
 
 /**
@@ -26,9 +24,7 @@ export const encryptCFB = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): U
  * @returns {Uint8Array}
  */
 export const decryptCFB = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
-    const cipher = new Kuznyechik(key)
-    const decrypter = (buf: Uint8Array) => {
-        return cipher.encryptBlock(buf)
-    }
-    return cfb_decrypt(decrypter, BLOCK_SIZE, data, iv)
+    const cipher = new Kuznyechik(key);
+    const decrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
+    return cfb_decrypt(decrypter, BLOCK_SIZE, data, iv);
 }

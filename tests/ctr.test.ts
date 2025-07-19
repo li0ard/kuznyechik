@@ -8,12 +8,10 @@ const encrypted = Buffer.from("f195d8bec10ed1dbd57b5fa240bda1b885eee733f6a13e5df
 
 describe("CTR", () => {
     test("Encryption", () => {
-        let result = encryptCTR(key, plaintext, iv.subarray(0, 8))
-        expect(result).toStrictEqual(encrypted)
+        expect(encryptCTR(key, plaintext, iv.subarray(0, 8))).toStrictEqual(encrypted)
     })
 
     test("Decryption", () => {
-        let result = decryptCTR(key, encrypted, iv.subarray(0, 8))
-        expect(result).toStrictEqual(plaintext)
+        expect(decryptCTR(key, encrypted, iv.subarray(0, 8))).toStrictEqual(plaintext)
     })
 })

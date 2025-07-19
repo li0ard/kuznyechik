@@ -6,6 +6,5 @@ const plaintext = Buffer.from("1122334455667700ffeeddccbbaa998800112233445566778
 const computed = Buffer.from("336f4d296059fbe34ddeb35b37749c67", "hex")
 
 test("MAC", () => {
-    let result = mac(key, plaintext)
-    expect(result).toStrictEqual(computed)
+    expect(mac(key, plaintext)).toStrictEqual(computed)
 })

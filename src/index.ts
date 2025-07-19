@@ -14,13 +14,13 @@ export class Kuznyechik {
 
         let iter_constants: Uint8Array[] = Array(32).fill(null).map(() => new Uint8Array(BLOCK_SIZE).fill(0));
         for(let i = 0; i < 32; i++) {
-            iter_constants[i][15] = i + 1
-            iter_constants[i] = this.transformL(iter_constants[i])
+            iter_constants[i][15] = i + 1;
+            iter_constants[i] = this.transformL(iter_constants[i]);
         }
 
         const roundKeys: Uint8Array[] = Array(ROUNDS).fill(null).map(() => new Uint8Array(BLOCK_SIZE));
-        roundKeys[0] = key.subarray(0, BLOCK_SIZE)
-        roundKeys[1] = key.subarray(BLOCK_SIZE)
+        roundKeys[0] = key.subarray(0, BLOCK_SIZE);
+        roundKeys[1] = key.subarray(BLOCK_SIZE);
 
         let temp1: Uint8Array = roundKeys[0].slice();
         let temp2: Uint8Array = roundKeys[1].slice();
@@ -66,14 +66,14 @@ export class Kuznyechik {
             roundKeys[3 + 2 * i] = new Uint8Array(temp2);
         }
 
-        this.roundKeys = roundKeys
+        this.roundKeys = roundKeys;
     }
 
     /**
      * Returns round keys 
      */
     public getRoundKeys(): Uint8Array[] {
-        return this.roundKeys.slice()
+        return this.roundKeys.slice();
     }
 
     /**
@@ -82,11 +82,11 @@ export class Kuznyechik {
      * The input of the `X` function is two sequences, and the output of the function is the XOR of these two sequences.
      */
     public transformX(a: Uint8Array, b: Uint8Array): Uint8Array {
-        const result = new Uint8Array(BLOCK_SIZE)
+        const result = new Uint8Array(BLOCK_SIZE);
         for(let i = 0; i < BLOCK_SIZE; i++) {
-            result[i] = a[i] ^ b[i]
+            result[i] = a[i] ^ b[i];
         }
-        return result
+        return result;
     }
 
     
@@ -98,12 +98,12 @@ export class Kuznyechik {
      * the `PI` substitution table.
      */
     public transformS(input: Uint8Array): Uint8Array {
-        const result = new Uint8Array(BLOCK_SIZE)
+        const result = new Uint8Array(BLOCK_SIZE);
         for(let i = 0; i < BLOCK_SIZE; i++) {
             result[i] = PI[input[i]];
         }
     
-        return result
+        return result;
     }
 
     /**
@@ -114,12 +114,12 @@ export class Kuznyechik {
      * the `PI_REV` substitution table.
      */
     public transformS_rev(input: Uint8Array): Uint8Array {
-        const result = new Uint8Array(BLOCK_SIZE)
+        const result = new Uint8Array(BLOCK_SIZE);
         for(let i = 0; i < BLOCK_SIZE; i++) {
             result[i] = PI_REV[input[i]];
         }
     
-        return result
+        return result;
     }
 
     
@@ -130,7 +130,7 @@ export class Kuznyechik {
      * applying the irreducible polynomial x^8 + x^7 + x^6 + x + 1 for modular reduction.
      */
     public gfMultiply(a: number, b: number): number {
-        let result = 0
+        let result = 0;
         let high_bit: number;
         
         for(let i = 0; i < 8; i++) {
@@ -148,7 +148,7 @@ export class Kuznyechik {
             b >>= 1;
         }
 
-        return result & 0xFF
+        return result & 0xFF;
     }
 
     /**
@@ -160,16 +160,16 @@ export class Kuznyechik {
     public transformR(input: Uint8Array): Uint8Array {
         const result = new Uint8Array(BLOCK_SIZE);
         result.set(input.subarray(0, 15), 1);
-        result[0] = input[15]
+        result[0] = input[15];
 
         let temp = 0;
         for (let i = 0; i < 16; i++) {
             temp ^= this.gfMultiply(result[i], L[i]);
         }
 
-        result[0] = temp
+        result[0] = temp;
 
-        return result
+        return result;
     }
 
     /**
@@ -179,16 +179,16 @@ export class Kuznyechik {
      * with a predefined linear transformation matrix (`L`) and cyclically shifting bytes.
      */
     public transformR_rev(input: Uint8Array): Uint8Array {
-        const result = new Uint8Array(BLOCK_SIZE)
+        const result = new Uint8Array(BLOCK_SIZE);
         let temp = 0;
         for (let i = 0; i < BLOCK_SIZE; i++) {
             temp ^= this.gfMultiply(input[i], L[i]);
         }
 
-        result.set(input.subarray(1))
-        result[15] = temp
+        result.set(input.subarray(1));
+        result[15] = temp;
 
-        return result
+        return result;
     }
 
     /**
@@ -198,12 +198,12 @@ export class Kuznyechik {
      * a fixed number of times (equal to the block size).
      */
     public transformL(input: Uint8Array): Uint8Array {
-        let result: Uint8Array = input.slice()
+        let result: Uint8Array = input.slice();
         for(let i = 0; i < BLOCK_SIZE; i++) {
-            result = this.transformR(result)
+            result = this.transformR(result);
         }
 
-        return result
+        return result;
     }
 
     /**
@@ -213,12 +213,12 @@ export class Kuznyechik {
      * a fixed number of times (equal to the block size).
      */
     public transformL_rev(input: Uint8Array): Uint8Array {
-        let result: Uint8Array = input.slice()
+        let result: Uint8Array = input.slice();
         for(let i = 0; i < BLOCK_SIZE; i++) {
-            result = this.transformR_rev(result)
+            result = this.transformR_rev(result);
         }
 
-        return result
+        return result;
     }
 
     
@@ -231,7 +231,7 @@ export class Kuznyechik {
         return [
             this.transformX(this.transformL(this.transformS(this.transformX(in_key1, iter_constant))), in_key2),
             in_key1.slice()
-        ]
+        ];
     }
 
     /**
@@ -243,13 +243,13 @@ export class Kuznyechik {
     public encryptBlock(block: Uint8Array): Uint8Array {
         if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
 
-        let currentBlock: Uint8Array = block.slice()
+        let currentBlock: Uint8Array = block.slice();
         for (let i = 0; i < 9; i++) {
-            currentBlock = this.transformL(this.transformS(this.transformX(this.roundKeys[i], currentBlock)))
+            currentBlock = this.transformL(this.transformS(this.transformX(this.roundKeys[i], currentBlock)));
         }
 
         currentBlock = this.transformX(this.roundKeys[9], currentBlock);
-        return currentBlock
+        return currentBlock;
     }
 
     /**
@@ -261,7 +261,7 @@ export class Kuznyechik {
     public decryptBlock(block: Uint8Array): Uint8Array {
         if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
 
-        let currentBlock: Uint8Array = block.slice()
+        let currentBlock: Uint8Array = block.slice();
         currentBlock = this.transformX(this.roundKeys[9], currentBlock);
         const reversedKeys = this.roundKeys.slice(0, 9).reverse();
         for (let i = 0; i < 9; i++) {
@@ -269,16 +269,16 @@ export class Kuznyechik {
             currentBlock = this.transformX(key, this.transformS_rev(this.transformL_rev(currentBlock)));
         }
 
-        return currentBlock
+        return currentBlock;
     }
 }
 
-export * from "./const"
-export * from "./modes/acpkm"
-export * from "./modes/cbc"
-export * from "./modes/cfb"
-export * from "./modes/ctr"
-export * from "./modes/ecb"
-export * from "./modes/mac"
-export * from "./modes/mgm"
-export * from "./modes/ofb"
+export * from "./const";
+export * from "./modes/acpkm";
+export * from "./modes/cbc";
+export * from "./modes/cfb";
+export * from "./modes/ctr";
+export * from "./modes/ecb";
+export * from "./modes/mac";
+export * from "./modes/mgm";
+export * from "./modes/ofb";

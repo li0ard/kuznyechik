@@ -7,9 +7,7 @@ import { mac as mac_ } from "@li0ard/gost3413"
  * @param data Input data
  */
 export const mac = (key: Uint8Array, data: Uint8Array): Uint8Array => {
-    const cipher = new Kuznyechik(key)
-    const encrypter = (buf: Uint8Array) => {
-        return cipher.encryptBlock(buf)
-    }
-    return mac_(encrypter, BLOCK_SIZE, data)
+    const cipher = new Kuznyechik(key);
+    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
+    return mac_(encrypter, BLOCK_SIZE, data);
 }

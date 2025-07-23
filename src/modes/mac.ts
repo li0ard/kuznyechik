@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../"
-import { mac as mac_ } from "@li0ard/gost3413"
+import { mac as mac_ } from "@li0ard/gost3413";
 
 /**
  * Compute MAC (CMAC, OMAC1) with Kuznyechik cipher

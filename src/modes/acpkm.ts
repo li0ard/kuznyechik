@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../";
-import { ctr_acpkm, acpkmDerivation as acpkmDerivation_, acpkmDerivationMaster as acpkmDerivationMaster_, KEYSIZE, omac_acpkm_master } from "@li0ard/gost3413"
+import { ctr_acpkm, acpkmDerivation as acpkmDerivation_, acpkmDerivationMaster as acpkmDerivationMaster_, KEYSIZE, omac_acpkm_master } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using the Counter with Advance Cryptographic Prolongation of Key Material (CTR-ACPKM) mode with Kuznyechik cipher
@@ -27,7 +27,7 @@ export const encryptCTR_ACPKM = (key: Uint8Array, data: Uint8Array, iv: Uint8Arr
  * @param iv Initialization vector
  * @returns {Uint8Array}
  */
-export const decryptCTR_ACPKM = encryptCTR_ACPKM
+export const decryptCTR_ACPKM = encryptCTR_ACPKM;
 
 /**
  * ACPKM key derivation

@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../";
-import { ofb } from "@li0ard/gost3413"
+import { ofb } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using the Output Feedback (OFB) mode with Kuznyechik cipher.

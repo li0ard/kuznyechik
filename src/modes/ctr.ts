@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../";
-import { ctr } from "@li0ard/gost3413"
+import { ctr } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using the Counter (CTR) mode with Kuznyechik cipher.

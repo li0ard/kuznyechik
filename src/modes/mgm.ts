@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../"
-import { MGM } from "@li0ard/gost3413"
+import { MGM } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using the Multilinear Galois Mode (MGM) with Kuznyechik cipher.

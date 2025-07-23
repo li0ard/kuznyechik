@@ -282,3 +282,4 @@ export * from "./modes/ecb";
 export * from "./modes/mac";
 export * from "./modes/mgm";
 export * from "./modes/ofb";
+export * from "./modes/kexp";

@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../";
-import { cbc_encrypt, cbc_decrypt } from "@li0ard/gost3413"
+import { cbc_encrypt, cbc_decrypt } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using Cipher Block Chaining (CBC) mode with the Kuznyechik cipher.

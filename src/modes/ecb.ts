@@ -1,5 +1,5 @@
 import { Kuznyechik, BLOCK_SIZE } from "../";
-import { ecb_encrypt, ecb_decrypt } from "@li0ard/gost3413"
+import { ecb_encrypt, ecb_decrypt } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using Electronic Codebook (ECB) mode with Kuznyechik cipher.

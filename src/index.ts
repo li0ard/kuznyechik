@@ -19,8 +19,8 @@ export class Kuznyechik {
         }
 
         const roundKeys: Uint8Array[] = Array(ROUNDS).fill(null).map(() => new Uint8Array(BLOCK_SIZE));
-        roundKeys[0] = key.subarray(0, BLOCK_SIZE);
-        roundKeys[1] = key.subarray(BLOCK_SIZE);
+        roundKeys[0] = key.slice(0, BLOCK_SIZE);
+        roundKeys[1] = key.slice(BLOCK_SIZE);
 
         let temp1: Uint8Array = roundKeys[0].slice();
         let temp2: Uint8Array = roundKeys[1].slice();
@@ -159,7 +159,7 @@ export class Kuznyechik {
      */
     public transformR(input: Uint8Array): Uint8Array {
         const result = new Uint8Array(BLOCK_SIZE);
-        result.set(input.subarray(0, 15), 1);
+        result.set(input.slice(0, 15), 1);
         result[0] = input[15];
 
         let temp = 0;
@@ -185,7 +185,7 @@ export class Kuznyechik {
             temp ^= this.gfMultiply(input[i], L[i]);
         }
 
-        result.set(input.subarray(1));
+        result.set(input.slice(1));
         result[15] = temp;
 
         return result;

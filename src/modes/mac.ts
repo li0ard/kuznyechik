@@ -2,7 +2,7 @@ import { BLOCK_SIZE, Kuznyechik } from "../"
 import { mac as mac_ } from "@li0ard/gost3413";
 
 /**
- * Compute MAC (CMAC, OMAC1) with Kuznyechik cipher
+ * Compute MAC (CMAC/OMAC) with Kuznyechik cipher
  * @param key Encryption key
  * @param data Input data
  */

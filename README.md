@@ -33,7 +33,7 @@ bunx jsr i @li0ard/kuznyechik
 - [x] Cipher Feedback (CFB)
 - [x] Counter (CTR)
 - [x] Output Feedback (OFB)
-- [x] MAC (CMAC/OMAC/OMAC1)
+- [x] MAC (CMAC/OMAC)
 - [x] Counter with Advance Cryptographic Prolongation of Key Material (CTR-ACPKM)
 - [x] MAC with Advance Cryptographic Prolongation of Key Material (OMAC-ACPKM)
 - [x] Multilinear Galois Mode (MGM)

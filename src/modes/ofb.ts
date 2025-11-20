@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, Kuznyechik } from "../";
+import { BLOCK_SIZE, Kuznyechik } from "../index.js";
 import { ofb } from "@li0ard/gost3413";
 
 /**
@@ -11,8 +11,7 @@ import { ofb } from "@li0ard/gost3413";
  */
 export const encryptOFB = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return ofb(encrypter, BLOCK_SIZE, data, iv);
+    return ofb(cipher.encryptBlock.bind(cipher), BLOCK_SIZE, data, iv);
 }
 
 /**

@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, Kuznyechik } from "../";
+import { BLOCK_SIZE, Kuznyechik } from "../index.js";
 import { ctr } from "@li0ard/gost3413";
 
 /**
@@ -11,8 +11,7 @@ import { ctr } from "@li0ard/gost3413";
  */
 export const encryptCTR = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return ctr(encrypter, BLOCK_SIZE, data, iv);
+    return ctr(cipher.encryptBlock.bind(cipher), BLOCK_SIZE, data, iv);
 }
 
 /**

@@ -1,4 +1,5 @@
-import { BLOCK_SIZE, KEY_SIZE, L, PI, PI_REV, ROUNDS, CipherError } from "./const";
+import { xor } from "@li0ard/gost3413/dist/utils.js";
+import { BLOCK_SIZE, KEY_SIZE, L, PI, PI_REV, ROUNDS, CipherError } from "./const.js";
 
 /** Kuznyechik core class */
 export class Kuznyechik {
@@ -75,20 +76,6 @@ export class Kuznyechik {
     public getRoundKeys(): Uint8Array[] {
         return this.roundKeys.slice();
     }
-
-    /**
-     * `X`-transformation.
-     * 
-     * The input of the `X` function is two sequences, and the output of the function is the XOR of these two sequences.
-     */
-    public transformX(a: Uint8Array, b: Uint8Array): Uint8Array {
-        const result = new Uint8Array(BLOCK_SIZE);
-        for(let i = 0; i < BLOCK_SIZE; i++) {
-            result[i] = a[i] ^ b[i];
-        }
-        return result;
-    }
-
     
     /**
      * `S`-transformation.
@@ -99,9 +86,7 @@ export class Kuznyechik {
      */
     public transformS(input: Uint8Array): Uint8Array {
         const result = new Uint8Array(BLOCK_SIZE);
-        for(let i = 0; i < BLOCK_SIZE; i++) {
-            result[i] = PI[input[i]];
-        }
+        for(let i = 0; i < BLOCK_SIZE; i++) result[i] = PI[input[i]];
     
         return result;
     }
@@ -115,9 +100,7 @@ export class Kuznyechik {
      */
     public transformS_rev(input: Uint8Array): Uint8Array {
         const result = new Uint8Array(BLOCK_SIZE);
-        for(let i = 0; i < BLOCK_SIZE; i++) {
-            result[i] = PI_REV[input[i]];
-        }
+        for(let i = 0; i < BLOCK_SIZE; i++) result[i] = PI_REV[input[i]];
     
         return result;
     }
@@ -134,17 +117,10 @@ export class Kuznyechik {
         let high_bit: number;
         
         for(let i = 0; i < 8; i++) {
-            if((b & 0b00000001) === 0b00000001) {
-                result ^= a;
-            }
-
+            if((b & 0b00000001) === 0b00000001) result ^= a;
             high_bit = a & 0b10000000;
             a <<= 1;
-
-            if(high_bit == 0b10000000) {
-                a ^= 0b11000011;
-            }
-
+            if(high_bit == 0b10000000) a ^= 0b11000011;
             b >>= 1;
         }
 
@@ -163,10 +139,7 @@ export class Kuznyechik {
         result[0] = input[15];
 
         let temp = 0;
-        for (let i = 0; i < 16; i++) {
-            temp ^= this.gfMultiply(result[i], L[i]);
-        }
-
+        for (let i = 0; i < 16; i++) temp ^= this.gfMultiply(result[i], L[i]);
         result[0] = temp;
 
         return result;
@@ -181,9 +154,7 @@ export class Kuznyechik {
     public transformR_rev(input: Uint8Array): Uint8Array {
         const result = new Uint8Array(BLOCK_SIZE);
         let temp = 0;
-        for (let i = 0; i < BLOCK_SIZE; i++) {
-            temp ^= this.gfMultiply(input[i], L[i]);
-        }
+        for (let i = 0; i < BLOCK_SIZE; i++) temp ^= this.gfMultiply(input[i], L[i]);
 
         result.set(input.slice(1));
         result[15] = temp;
@@ -199,9 +170,7 @@ export class Kuznyechik {
      */
     public transformL(input: Uint8Array): Uint8Array {
         let result: Uint8Array = input.slice();
-        for(let i = 0; i < BLOCK_SIZE; i++) {
-            result = this.transformR(result);
-        }
+        for(let i = 0; i < BLOCK_SIZE; i++) result = this.transformR(result);
 
         return result;
     }
@@ -214,9 +183,7 @@ export class Kuznyechik {
      */
     public transformL_rev(input: Uint8Array): Uint8Array {
         let result: Uint8Array = input.slice();
-        for(let i = 0; i < BLOCK_SIZE; i++) {
-            result = this.transformR_rev(result);
-        }
+        for(let i = 0; i < BLOCK_SIZE; i++) result = this.transformR_rev(result);
 
         return result;
     }
@@ -229,7 +196,7 @@ export class Kuznyechik {
      */
     public transformF(in_key1: Uint8Array, in_key2: Uint8Array, iter_constant: Uint8Array): Uint8Array[] {        
         return [
-            this.transformX(this.transformL(this.transformS(this.transformX(in_key1, iter_constant))), in_key2),
+            xor(this.transformL(this.transformS(xor(in_key1, iter_constant))), in_key2),
             in_key1.slice()
         ];
     }
@@ -242,13 +209,10 @@ export class Kuznyechik {
      */
     public encryptBlock(block: Uint8Array): Uint8Array {
         if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
-
         let currentBlock: Uint8Array = block.slice();
-        for (let i = 0; i < 9; i++) {
-            currentBlock = this.transformL(this.transformS(this.transformX(this.roundKeys[i], currentBlock)));
-        }
+        for (let i = 0; i < 9; i++) currentBlock = this.transformL(this.transformS(xor(this.roundKeys[i], currentBlock)));
 
-        currentBlock = this.transformX(this.roundKeys[9], currentBlock);
+        currentBlock = xor(this.roundKeys[9], currentBlock);
         return currentBlock;
     }
 
@@ -262,24 +226,24 @@ export class Kuznyechik {
         if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
 
         let currentBlock: Uint8Array = block.slice();
-        currentBlock = this.transformX(this.roundKeys[9], currentBlock);
+        currentBlock = xor(this.roundKeys[9], currentBlock);
         const reversedKeys = this.roundKeys.slice(0, 9).reverse();
         for (let i = 0; i < 9; i++) {
             const key = reversedKeys[i];
-            currentBlock = this.transformX(key, this.transformS_rev(this.transformL_rev(currentBlock)));
+            currentBlock = xor(key, this.transformS_rev(this.transformL_rev(currentBlock)));
         }
 
         return currentBlock;
     }
 }
 
-export * from "./const";
-export * from "./modes/acpkm";
-export * from "./modes/cbc";
-export * from "./modes/cfb";
-export * from "./modes/ctr";
-export * from "./modes/ecb";
-export * from "./modes/mac";
-export * from "./modes/mgm";
-export * from "./modes/ofb";
-export * from "./modes/kexp";
+export * from "./const.js";
+export * from "./modes/acpkm.js";
+export * from "./modes/cbc.js";
+export * from "./modes/cfb.js";
+export * from "./modes/ctr.js";
+export * from "./modes/ecb.js";
+export * from "./modes/mac.js";
+export * from "./modes/mgm.js";
+export * from "./modes/ofb.js";
+export * from "./modes/kexp.js";

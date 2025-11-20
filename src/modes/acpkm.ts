@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, Kuznyechik } from "../";
+import { BLOCK_SIZE, Kuznyechik } from "../index.js";
 import { ctr_acpkm, acpkmDerivation as acpkmDerivation_, acpkmDerivationMaster as acpkmDerivationMaster_, KEYSIZE, omac_acpkm_master } from "@li0ard/gost3413";
 
 /**
@@ -10,14 +10,11 @@ import { ctr_acpkm, acpkmDerivation as acpkmDerivation_, acpkmDerivationMaster a
  */
 export const encryptCTR_ACPKM = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
     class ACPKMClass extends Kuznyechik {
-        encrypt(block: Uint8Array): Uint8Array {
-            return this.encryptBlock(block);
-        }
+        encrypt(block: Uint8Array): Uint8Array { return this.encryptBlock(block); }
     }
     
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return ctr_acpkm(ACPKMClass, encrypter, BLOCK_SIZE * 2, BLOCK_SIZE, data, iv);
+    return ctr_acpkm(ACPKMClass, cipher.encryptBlock.bind(cipher), BLOCK_SIZE * 2, BLOCK_SIZE, data, iv);
 }
 
 /**
@@ -35,9 +32,7 @@ export const decryptCTR_ACPKM = encryptCTR_ACPKM;
  */
 export const acpkmDerivation = (key: Uint8Array): Uint8Array => {
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-
-    return acpkmDerivation_(encrypter, BLOCK_SIZE);
+    return acpkmDerivation_(cipher.encryptBlock.bind(cipher), BLOCK_SIZE);
 }
 
 /**
@@ -47,14 +42,11 @@ export const acpkmDerivation = (key: Uint8Array): Uint8Array => {
  */
 export const acpkmDerivationMaster = (key: Uint8Array, keySize: number): Uint8Array => {
     class ACPKMClass extends Kuznyechik {
-        encrypt(block: Uint8Array): Uint8Array {
-            return this.encryptBlock(block);
-        }
+        encrypt(block: Uint8Array): Uint8Array { return this.encryptBlock(block); }
     }
 
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return acpkmDerivationMaster_(ACPKMClass, encrypter, ((768 / 8) | 0), BLOCK_SIZE, keySize * (KEYSIZE + BLOCK_SIZE));
+    return acpkmDerivationMaster_(ACPKMClass, cipher.encryptBlock.bind(cipher), 96, BLOCK_SIZE, keySize * (KEYSIZE + BLOCK_SIZE));
 }
 
 /**
@@ -64,11 +56,8 @@ export const acpkmDerivationMaster = (key: Uint8Array, keySize: number): Uint8Ar
  */
 export const omac_ACPKM = (key: Uint8Array, data: Uint8Array): Uint8Array => {
     class ACPKMClass extends Kuznyechik {
-        encrypt(block: Uint8Array): Uint8Array {
-            return this.encryptBlock(block);
-        }
+        encrypt(block: Uint8Array): Uint8Array { return this.encryptBlock(block); }
     }
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return omac_acpkm_master(ACPKMClass, encrypter, ((768 / 8) | 0), (BLOCK_SIZE * 2), BLOCK_SIZE, data);
+    return omac_acpkm_master(ACPKMClass, cipher.encryptBlock.bind(cipher), 96, (BLOCK_SIZE * 2), BLOCK_SIZE, data);
 }

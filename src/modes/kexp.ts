@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, Kuznyechik } from "../";
+import { BLOCK_SIZE, Kuznyechik } from "../index.js";
 import { kexp15 as kexp15_, kimp15 as kimp15_ } from "@li0ard/gost3413";
 
 /**
@@ -10,10 +10,9 @@ import { kexp15 as kexp15_, kimp15 as kimp15_ } from "@li0ard/gost3413";
  */
 export const kexp15 = (key: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, iv: Uint8Array): Uint8Array => {
     const keyCipher = new Kuznyechik(keyEnc);
-    const keyEncrypter = (block: Uint8Array) => keyCipher.encryptBlock(block);
     const macCipher = new Kuznyechik(keyMac);
-    const macEncrypter = (block: Uint8Array) => macCipher.encryptBlock(block);
-    return kexp15_(keyEncrypter, macEncrypter, BLOCK_SIZE, key, iv);
+
+    return kexp15_(keyCipher.encryptBlock.bind(keyCipher), macCipher.encryptBlock.bind(macCipher), BLOCK_SIZE, key, iv);
 }
 
 /**
@@ -25,8 +24,7 @@ export const kexp15 = (key: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, 
  */
 export const kimp15 = (kexp: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, iv: Uint8Array): Uint8Array => {
     const keyCipher = new Kuznyechik(keyEnc);
-    const keyEncrypter = (block: Uint8Array) => keyCipher.encryptBlock(block);
     const macCipher = new Kuznyechik(keyMac);
-    const macEncrypter = (block: Uint8Array) => macCipher.encryptBlock(block);
-    return kimp15_(keyEncrypter, macEncrypter, BLOCK_SIZE, kexp, iv);
+
+    return kimp15_(keyCipher.encryptBlock.bind(keyCipher), macCipher.encryptBlock.bind(macCipher), BLOCK_SIZE, kexp, iv);
 }

@@ -1,4 +1,4 @@
-import { Kuznyechik, BLOCK_SIZE } from "../";
+import { Kuznyechik, BLOCK_SIZE } from "../index.js";
 import { ecb_encrypt, ecb_decrypt } from "@li0ard/gost3413";
 
 /**
@@ -10,8 +10,7 @@ import { ecb_encrypt, ecb_decrypt } from "@li0ard/gost3413";
  */
 export const encryptECB = (key: Uint8Array, data: Uint8Array): Uint8Array => {
     const cipher = new Kuznyechik(key);
-    const encrypter = (buf: Uint8Array) => cipher.encryptBlock(buf);
-    return ecb_encrypt(encrypter, BLOCK_SIZE, data);
+    return ecb_encrypt(cipher.encryptBlock.bind(cipher), BLOCK_SIZE, data);
 }
 
 /**
@@ -23,6 +22,5 @@ export const encryptECB = (key: Uint8Array, data: Uint8Array): Uint8Array => {
  */
 export const decryptECB = (key: Uint8Array, data: Uint8Array): Uint8Array => {
     const cipher = new Kuznyechik(key);
-    const decrypter = (buf: Uint8Array) => cipher.decryptBlock(buf);
-    return ecb_decrypt(decrypter, BLOCK_SIZE, data);
+    return ecb_decrypt(cipher.decryptBlock.bind(cipher), BLOCK_SIZE, data);
 }

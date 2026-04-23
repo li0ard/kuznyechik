@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../index.js";
-import { ctr } from "@li0ard/gost3413";
+import { ctr, type TArg, type TRet } from "@li0ard/gost3413";
 
 /**
  * Encrypts data using the Counter (CTR) mode with Kuznyechik cipher.
@@ -7,9 +7,8 @@ import { ctr } from "@li0ard/gost3413";
  * @param key Encryption key
  * @param data Data to be encrypted
  * @param iv Initialization vector
- * @returns {Uint8Array}
  */
-export const encryptCTR = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): Uint8Array => {
+export const encryptCTR = (key: TArg<Uint8Array>, data: TArg<Uint8Array>, iv: TArg<Uint8Array>): TRet<Uint8Array> => {
     const cipher = new Kuznyechik(key);
     return ctr(cipher.encryptBlock.bind(cipher), BLOCK_SIZE, data, iv);
 }
@@ -20,6 +19,5 @@ export const encryptCTR = (key: Uint8Array, data: Uint8Array, iv: Uint8Array): U
  * @param key Encryption key
  * @param data Data to be decrypted
  * @param iv Initialization vector
- * @returns {Uint8Array}
  */
 export const decryptCTR = encryptCTR;

@@ -1,5 +1,5 @@
 import { BLOCK_SIZE, Kuznyechik } from "../index.js";
-import { kexp15 as kexp15_, kimp15 as kimp15_ } from "@li0ard/gost3413";
+import { kexp15 as kexp15_, kimp15 as kimp15_, type TArg, type TRet } from "@li0ard/gost3413";
 
 /**
  * KExp15 key exporting
@@ -8,7 +8,12 @@ import { kexp15 as kexp15_, kimp15 as kimp15_ } from "@li0ard/gost3413";
  * @param keyMac Key for key authentication
  * @param iv Initialization vector (Half of block size)
  */
-export const kexp15 = (key: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, iv: Uint8Array): Uint8Array => {
+export const kexp15 = (
+    key: TArg<Uint8Array>,
+    keyEnc: TArg<Uint8Array>,
+    keyMac: TArg<Uint8Array>,
+    iv: TArg<Uint8Array>
+): TRet<Uint8Array> => {
     const keyCipher = new Kuznyechik(keyEnc);
     const macCipher = new Kuznyechik(keyMac);
 
@@ -22,7 +27,12 @@ export const kexp15 = (key: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, 
  * @param keyMac Key for key authentication
  * @param iv Initialization vector (Half of block size)
  */
-export const kimp15 = (kexp: Uint8Array, keyEnc: Uint8Array, keyMac: Uint8Array, iv: Uint8Array): Uint8Array => {
+export const kimp15 = (
+    kexp: TArg<Uint8Array>,
+    keyEnc: TArg<Uint8Array>,
+    keyMac: TArg<Uint8Array>,
+    iv: TArg<Uint8Array>
+): TRet<Uint8Array> => {
     const keyCipher = new Kuznyechik(keyEnc);
     const macCipher = new Kuznyechik(keyMac);
 

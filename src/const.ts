@@ -51,11 +51,3 @@ export const PI_REV: Uint8Array = new Uint8Array([
 export const L: Uint8Array = new Uint8Array([
     0x01, 0x94, 0x20, 0x85, 0x10, 0xc2, 0xc0, 0x01, 0xfb, 0x01, 0xc0, 0xc2, 0x10, 0x85, 0x20, 0x94,
 ]);
-
-/** Wrapper for default `Error` class */
-export class CipherError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "CipherError";
-    }
-}

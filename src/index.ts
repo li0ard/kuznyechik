@@ -1,5 +1,5 @@
-import { xor } from "@li0ard/gost3413/dist/utils.js";
-import { BLOCK_SIZE, KEY_SIZE, L, PI, PI_REV, ROUNDS, CipherError } from "./const.js";
+import { xor, type TArg, type TRet } from "@li0ard/gost3413";
+import { BLOCK_SIZE, KEY_SIZE, L, PI, PI_REV, ROUNDS } from "./const.js";
 
 /** Kuznyechik core class */
 export class Kuznyechik {
@@ -9,9 +9,9 @@ export class Kuznyechik {
      * Kuznyechik core class
      * @param key Encryption key
      */
-    constructor(key: Uint8Array) {
-        if (key.length !== KEY_SIZE) throw new CipherError("Invalid key length");
-        if (key.every(byte => byte === 0)) throw new CipherError("Invalid key format");
+    constructor(key: TArg<Uint8Array>) {
+        if (key.length !== KEY_SIZE) throw new Error("Invalid key length");
+        if (key.every(byte => byte === 0)) throw new Error("Invalid key format");
 
         let iter_constants: Uint8Array[] = Array(32).fill(null).map(() => new Uint8Array(BLOCK_SIZE).fill(0));
         for(let i = 0; i < 32; i++) {
@@ -73,9 +73,7 @@ export class Kuznyechik {
     /**
      * Returns round keys 
      */
-    public getRoundKeys(): Uint8Array[] {
-        return this.roundKeys.slice();
-    }
+    public getRoundKeys(): Uint8Array[] { return this.roundKeys; }
     
     /**
      * `S`-transformation.
@@ -84,7 +82,7 @@ export class Kuznyechik {
      * Each byte of the input sequence is replaced by the corresponding byte from
      * the `PI` substitution table.
      */
-    public transformS(input: Uint8Array): Uint8Array {
+    private transformS(input: TArg<Uint8Array>): TRet<Uint8Array> {
         const result = new Uint8Array(BLOCK_SIZE);
         for(let i = 0; i < BLOCK_SIZE; i++) result[i] = PI[input[i]];
     
@@ -98,7 +96,7 @@ export class Kuznyechik {
      * Each byte of the input sequence is replaced by the corresponding byte from
      * the `PI_REV` substitution table.
      */
-    public transformS_rev(input: Uint8Array): Uint8Array {
+    private transformS_rev(input: TArg<Uint8Array>): TRet<Uint8Array> {
         const result = new Uint8Array(BLOCK_SIZE);
         for(let i = 0; i < BLOCK_SIZE; i++) result[i] = PI_REV[input[i]];
     
@@ -112,7 +110,7 @@ export class Kuznyechik {
      * This method multiplies two bytes in the Galois Field using bitwise operations,
      * applying the irreducible polynomial x^8 + x^7 + x^6 + x + 1 for modular reduction.
      */
-    public gfMultiply(a: number, b: number): number {
+    private gfMultiply(a: number, b: number): number {
         let result = 0;
         let high_bit: number;
         
@@ -133,7 +131,7 @@ export class Kuznyechik {
      * Performs a linear transformation on the input block by cyclically shifting bytes
      * and applying Galois Field multiplication with a predefined linear transformation matrix (`L`).
      */
-    public transformR(input: Uint8Array): Uint8Array {
+    private transformR(input: TArg<Uint8Array>): TRet<Uint8Array> {
         const result = new Uint8Array(BLOCK_SIZE);
         result.set(input.slice(0, 15), 1);
         result[0] = input[15];
@@ -151,7 +149,7 @@ export class Kuznyechik {
      * Performs a linear transformation on the input block by applying Galois Field multiplication
      * with a predefined linear transformation matrix (`L`) and cyclically shifting bytes.
      */
-    public transformR_rev(input: Uint8Array): Uint8Array {
+    private transformR_rev(input: TArg<Uint8Array>): TRet<Uint8Array> {
         const result = new Uint8Array(BLOCK_SIZE);
         let temp = 0;
         for (let i = 0; i < BLOCK_SIZE; i++) temp ^= this.gfMultiply(input[i], L[i]);
@@ -168,11 +166,11 @@ export class Kuznyechik {
      * Performs a linear transformation on the input block by repeatedly applying the `R`-transformation
      * a fixed number of times (equal to the block size).
      */
-    public transformL(input: Uint8Array): Uint8Array {
+    private transformL(input: TArg<Uint8Array>): TRet<Uint8Array> {
         let result: Uint8Array = input.slice();
         for(let i = 0; i < BLOCK_SIZE; i++) result = this.transformR(result);
 
-        return result;
+        return result as TRet<Uint8Array>;
     }
 
     /**
@@ -181,11 +179,11 @@ export class Kuznyechik {
      * Performs a linear transformation on the input block by repeatedly applying the `Rrev`-transformation
      * a fixed number of times (equal to the block size).
      */
-    public transformL_rev(input: Uint8Array): Uint8Array {
+    private transformL_rev(input: TArg<Uint8Array>): TRet<Uint8Array> {
         let result: Uint8Array = input.slice();
         for(let i = 0; i < BLOCK_SIZE; i++) result = this.transformR_rev(result);
 
-        return result;
+        return result as TRet<Uint8Array>;
     }
 
     
@@ -194,7 +192,7 @@ export class Kuznyechik {
      * 
      * Performs a key transformation using a series of linear and substitution transformations.
      */
-    public transformF(in_key1: Uint8Array, in_key2: Uint8Array, iter_constant: Uint8Array): Uint8Array[] {        
+    private transformF(in_key1: TArg<Uint8Array>, in_key2: TArg<Uint8Array>, iter_constant: TArg<Uint8Array>): Uint8Array[] {
         return [
             xor(this.transformL(this.transformS(xor(in_key1, iter_constant))), in_key2),
             in_key1.slice()
@@ -204,26 +202,22 @@ export class Kuznyechik {
     /**
      * Encrypts single block of data using Kuznyechik encryption algorithm.
      * @param block Block to be encrypted
-     * @returns {Uint8Array} Encrypted block
-     * @throws {CipherError} Block size is invalid or data is too short
      */
-    public encryptBlock(block: Uint8Array): Uint8Array {
-        if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
+    public encryptBlock(block: TArg<Uint8Array>): TRet<Uint8Array> {
+        if (block.length === 0 || block.length !== BLOCK_SIZE) throw new Error("Invalid block size");
         let currentBlock: Uint8Array = block.slice();
         for (let i = 0; i < 9; i++) currentBlock = this.transformL(this.transformS(xor(this.roundKeys[i], currentBlock)));
 
         currentBlock = xor(this.roundKeys[9], currentBlock);
-        return currentBlock;
+        return currentBlock as TRet<Uint8Array>;
     }
 
     /**
      * Decrypts single block of data using Kuznyechik encryption algorithm.
      * @param block Block to be decrypted
-     * @returns {Uint8Array} Decrypted block
-     * @throws {CipherError} Block size is invalid or data is too short
      */
-    public decryptBlock(block: Uint8Array): Uint8Array {
-        if (block.length === 0 || block.length !== BLOCK_SIZE) throw new CipherError("Invalid block size");
+    public decryptBlock(block: TArg<Uint8Array>): TRet<Uint8Array> {
+        if (block.length === 0 || block.length !== BLOCK_SIZE) throw new Error("Invalid block size");
 
         let currentBlock: Uint8Array = block.slice();
         currentBlock = xor(this.roundKeys[9], currentBlock);
@@ -233,7 +227,7 @@ export class Kuznyechik {
             currentBlock = xor(key, this.transformS_rev(this.transformL_rev(currentBlock)));
         }
 
-        return currentBlock;
+        return currentBlock as TRet<Uint8Array>;
     }
 }
 

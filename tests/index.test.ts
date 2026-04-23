@@ -3,7 +3,7 @@ import { Kuznyechik } from "../src"
 
 const key = Buffer.from("8899AABBCCDDEEFF0011223344556677FEDCBA98765432100123456789ABCDEF", "hex")
 
-describe("Transformation S", () => {
+/*describe("Transformation S", () => {
     let test_cases = [
         [
             new Uint8Array([0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00]),
@@ -122,7 +122,7 @@ describe("Transformation L", () => {
             expect(new Kuznyechik(key).transformL_rev(input)).toStrictEqual(i[0])
         }
     })
-})
+})*/
 
 test("Round keys", () => {
     let expected = [
